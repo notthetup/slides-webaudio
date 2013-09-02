@@ -383,14 +383,14 @@
 						<div class="fragment">
 							<pre><code>&lt;audio controls="controls"&gt;
 	Your browser does not support the &lt;code&gt;audio&lt;/code&gt; element.
-	&lt;source src="http://bit.ly/deepmp3" type="audio/wav"&gt;
+	&lt;cSource src="http://bit.ly/deepmp3" type="audio/wav"&gt;
 &lt;/audio&gt;</code></pre>
 						</div>
 					</div>
 					<div class="fragment">
 						<audio controls="controls">
 							Your browser does not support the <code>audio</code> element.
-							<source src="https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3" type="audio/wav">
+							<cSource src="https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3" type="audio/wav">
 						</audio>
 					</div>
 				</section>
@@ -415,7 +415,7 @@
 						<pre><code>audioTag.loop = true;</code></pre>
 						<audio controls="controls" loop="">
 							Your browser does not support the <code>audio</code> element.
-							<source src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
+							<cSource src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
 						</audio>
 					</div>
 					<div>
@@ -430,10 +430,10 @@
 						<pre><code>audioTag.playbackRate = 2;</code></pre>
 						<audio controls="controls" loop="" id="loopspeed">
 							Your browser does not support the <code>audio</code> element.
-							<source src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
+							<cSource src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
 							</audio>
 							<br>
-						<input type="range">
+						<input type="range" min="50" max="200" value="100"  onchange="var a = document.getElementById('loopspeed'); console.log(a); a.playbackRate=this.value/100;">
 					</div>
 				</section>
 				<section>
@@ -557,16 +557,16 @@
 					<div class="fragment" data-fragment-index="1">
 						<div style="text-align: left;">
 							<font style="font-size: 42px;">
-								<u>AudioContext</u> -&nbsp;
+								<u>AudioContext</u> -
 							</font>
-							<span style="text-align: center;">God of WebAudio. Everything begins and ends here.&nbsp;
+							<span style="text-align: center;">God of WebAudio. Everything begins and ends here.
 							</span>
 						</div>
 					</div>
 					<div class="fragment" data-fragment-index="1">
 						<div style="text-align: left;">
 							<div>
-								<pre><code>myContext = new AudioContext();<br></code></pre>
+								<pre><code>myContext = new webkitAudioContext();</code></pre>
 							</div>
 						</div>
 					</div>
@@ -578,29 +578,78 @@
 					</div>
 					<div style="text-align: left;" class="fragment" data-fragment-index="3">
 						<font style="font-size: 42px;">
-							<u>Destination</u> -&nbsp;
+							<u>Destination</u> -
 						</font>
-						<span style="text-align: center;">Main Audio output. Plug everything into this..&nbsp;
+						<span style="text-align: center;">Main Audio output. Plug everything into this..
 						</span>
 					</div>
 					<div class="fragment" data-fragment-index="3">
-						<pre><code>source = context.createOscillator();
-source.connect(myContext.destination);</code></pre>
+						<pre><code>cSource = context.createOscillator();
+cSource.connect(myContext.destination);</code></pre>
 					</div>
 					<div class="fragment" data-fragment-index="5">
 							<font style="font-size: 24px;">
 								<br>
 							</font>
 					</div>
-					<div class="fragment" data-fragment-index="5">
-						<font style="font-size: 24px;">Pitch&nbsp;</font> <input type="range">
+					<div class="fragment" data-fragment-index="5" >
+						<font style="font-size: 24px;">Pitch</font> <input type="range" id="pitchslider"min="100" max="10000" value="1000">
 					</div>
 					<div class="fragment" data-fragment-index="5">
-						<font style="font-size: 24px;">Volume&nbsp;</font> <input type="range">
+						<font style="font-size: 24px;">Volume</font> <input type="range" id="volumeslider">
 					</div>
 					<div class="fragment" data-fragment-index="5">
-						<button> ▶❚❚</button>
+						<button id="playButton"> ▶❚❚</button>
 					</div>
+					<script>
+					var playState = "stopped";
+					var button = document.getElementById("playButton");
+					var pitchslider = document.getElementById("pitchslider");
+					var volumeslider = document.getElementById("volumeslider");
+
+
+					var context = new webkitAudioContext();
+					var osc = context.createOscillator();
+					var gain  = context.createGain();
+					osc.connect(gain);
+					gain.connect(context.destination);
+
+					var playTone = function(){
+						osc.frequency.value = pitchslider.value;
+						gain.gain.value = volumeslider.value/100;
+						osc.start(0);
+						console.log("starting");
+					}
+
+					var stopTone = function(){
+						osc.stop(0);
+						osc = context.createOscillator();
+						osc.connect(gain);
+						console.log("stopping");
+					}
+
+					button.addEventListener('click', function() {
+						if (playState == "stopped"){
+							playTone();
+							playState = "playing";
+						}
+						else if (playState == "playing"){
+							stopTone();
+							playState = "stopped";
+						}
+					});
+
+					pitchslider.onchange = function() {
+						osc.frequency.value = pitchslider.value;
+						//console.log("changing pitch : " +  pitchslider.value);
+					}
+
+					volumeslider.onchange = function() {
+						gain.gain.value = volumeslider.value/100;
+						//console.log("changing volume " + volumeslider.value/100);
+					}
+
+					</script>
 				</section>
 				<section>
 					<h2>AudioNodes</h2>
@@ -661,12 +710,12 @@ source.connect(myContext.destination);</code></pre>
 					<div>
 						<pre><code>var audio = new Audio();
 audio.src = 'https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3';
-source = context.createMediaElementSource(audio);
+cSource = context.createMediaElementSource(audio);
 var filter = context.createBiquadFilter();
 filter.type = filter.LOWPASS;
-filter.frequency.value = 440;
+filter.frequency.value = 5000;
 
-source.connect(this.filter);
+cSource.connect(this.filter);
 filter.connect(context.destination);
 						</code></pre>
 					</div>
@@ -676,39 +725,70 @@ filter.connect(context.destination);
 						Pause/Play
 					</div>
 					<div>
-						<button> ▶❚❚</button>
+						<button id="filterPlayButton"> ▶❚❚</button>
 						<br>
 						Filter Cutoff
 					</div>
 					<div>
-						<input type="range" min="100" max="20000" value="20000">
+						<input type="range" min="100" max="5000" value="5000" id="filterSlider">
 					</div>
 					<div>
 						<br>
 					</div>
+					<script>
+					var fAudio = new Audio();
+					fAudio.src = 'https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3';
+					var fSource = context.createMediaElementSource(fAudio);
+					var filter = context.createBiquadFilter();
+					filter.type = filter.LOWPASS;
+					filter.frequency.value = 5000;
+
+					fSource.connect(this.filter);
+					filter.connect(context.destination);
+
+					var fPlayState = "stopped";
+					var fPlaybutton = document.getElementById("filterPlayButton");
+					var filterSlider = document.getElementById("filterSlider");
+
+					fPlaybutton.addEventListener('click', function() {
+						if (fPlayState == "stopped"){
+							fAudio.play();
+							fPlayState = "playing";
+						}
+						else if (fPlayState == "playing"){
+							fAudio.pause();
+							fPlayState = "stopped";
+						}
+					});
+
+					filterSlider.onchange = function() {
+						filter.frequency.value = filterSlider.value;
+					}
+
+					</script>
 
 				</section>
 				<section>
 					<h2>Convolver</h2>
 					<div>
-						<pre><code>var source = context.createBufferSource();
+						<pre><code>var cSource = context.createBufferSource();
 var convolver = context.createConvolver();
 
-source.connect(convolver);
+cSource.connect(convolver);
 convolver.connect(context.destination);
 
-/*Load source audio and impulse response*/
+/*Load cSource audio and impulse response*/
 var request = new XMLHttpRequest();
 request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/deep10.mp3", true);
 request.responseType = "arraybuffer";
 request.onload = function () {
-	source.buffer = context.createBuffer(request.response, 2);
+	cSource.buffer = context.createBuffer(request.response, 2);
 	var ir_request = new XMLHttpRequest();
 	ir_request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
 	ir_request.responseType = "arraybuffer";
 	ir_request.onload = function () {
 		convolver.buffer = context.createBuffer(ir_request.response, 2);
-		source.start(0);
+		cSource.start(0);
 	}
 	ir_request.send();
 }
@@ -718,12 +798,90 @@ request.send();</code></pre>
 						<br>
 					</div>
 					<div>
-						Hall : <button> ▶❚❚</button>
+						Hall : <button id="hButton" disabled> ▶❚❚</button>
 					</div>
 					<div>
-						Can :  <button> ▶❚❚</button>
+						Can :  <button id="cButton" disabled> ▶❚❚</button>
 					</div>
 					<br>
+					<script>
+					var sourceBuffer;
+					var cState = "stopped";
+					var hState = "stopped";
+
+					var cSource = context.createBufferSource();
+					var hSource = context.createBufferSource();
+					var hConvolver = context.createConvolver();
+					var cConvolver = context.createConvolver();
+
+					cSource.connect(cConvolver);
+					cConvolver.connect(context.destination);
+
+					hSource.connect(hConvolver);
+					hConvolver.connect(context.destination);
+
+					var hButton = document.getElementById("hButton");
+					var cButton = document.getElementById("cButton");
+
+					/*Load cSource audio and impulse response*/
+					var request = new XMLHttpRequest();
+					request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/deep10.mp3", true);
+					request.responseType = "arraybuffer";
+					request.onload = function () {
+						sourceBuffer = context.createBuffer(request.response, 2);
+						cSource.buffer = sourceBuffer;
+						hSource.buffer = sourceBuffer;
+
+
+						var ir_requestH = new XMLHttpRequest();
+						ir_requestH.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
+						ir_requestH.responseType = "arraybuffer";
+						ir_requestH.onload = function () {
+							hConvolver.buffer = context.createBuffer(ir_requestH.response, 2);
+							hButton.disabled = false;
+
+						}
+						ir_requestH.send();
+
+						var ir_requestC = new XMLHttpRequest();
+						ir_requestC.open("GET", "https://dl.dropboxusercontent.com/u/77191118/cup_ir.wav", true);
+						ir_requestC.responseType = "arraybuffer";
+						ir_requestC.onload = function () {
+							cConvolver.buffer = context.createBuffer(ir_requestC.response, 2);
+							cButton.disabled = false;
+						}
+						ir_requestC.send();
+					}
+					request.send();
+
+					hButton.addEventListener('click', function (){
+						if(hState == "stopped"){
+							hSource.start(0);
+							hState = "playing";
+						}else if (hState == "playing"){
+							hSource.stop(0);
+							hState = "stopped";
+							hSource = context.createBufferSource();
+							hSource.buffer = sourceBuffer;
+							hSource.connect(hConvolver);
+						}
+					});
+
+					cButton.addEventListener('click', function (){
+						if(cState == "stopped"){
+							cSource.start(0);
+							cState = "playing";
+						}else if (cState == "playing"){
+							cSource.stop(0);
+							cState = "stopped";
+							cSource = context.createBufferSource();
+							cSource.buffer = sourceBuffer;
+							cSource.connect(cConvolver);
+						}
+					})
+
+					</script>
+
 				</section>
 				<section>
 					<h2>Demos</h2>
@@ -929,6 +1087,9 @@ request.send();</code></pre>
 					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
 				]
 			});
+
+		</script>
+		<script>
 
 		</script>
 
