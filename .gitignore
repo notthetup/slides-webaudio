@@ -1,6 +1,23 @@
+<<<<<<< HEAD
 .DS_Store
 .svn
 log/*.log
 tmp/**
 node_modules/
 .sass-cache
+=======
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+>>>>>>> ad6b02876b5a77e1daaeedd59820dd2b5311afe9

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.png?branch=master)](https://travis-ci.org/hakimel/reveal.js)
 
 A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://lab.hakim.se/reveal-js/).
@@ -792,3 +793,9 @@ $ grunt serve
 MIT licensed
 
 Copyright (C) 2013 Hakim El Hattab, http://hakim.se
+=======
+webaudioslides
+==============
+
+Slides for a talk on WebAudioAPI in reveal.js
+>>>>>>> ad6b02876b5a77e1daaeedd59820dd2b5311afe9
