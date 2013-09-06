@@ -383,14 +383,14 @@
 						<div class="fragment">
 							<pre><code>&lt;audio controls="controls"&gt;
 	Your browser does not support the &lt;code&gt;audio&lt;/code&gt; element.
-	&lt;cSource src="http://bit.ly/deepmp3" type="audio/wav"&gt;
+	&lt;source src="http://bit.ly/deepmp3" type="audio/wav"&gt;
 &lt;/audio&gt;</code></pre>
 						</div>
 					</div>
 					<div class="fragment">
 						<audio controls="controls">
 							Your browser does not support the <code>audio</code> element.
-							<cSource src="https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3" type="audio/wav">
+							<source src="https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3" type="audio/wav">
 						</audio>
 					</div>
 				</section>
@@ -415,7 +415,7 @@
 						<pre><code>audioTag.loop = true;</code></pre>
 						<audio controls="controls" loop="">
 							Your browser does not support the <code>audio</code> element.
-							<cSource src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
+							<source src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
 						</audio>
 					</div>
 					<div>
@@ -430,7 +430,7 @@
 						<pre><code>audioTag.playbackRate = 2;</code></pre>
 						<audio controls="controls" loop="" id="loopspeed">
 							Your browser does not support the <code>audio</code> element.
-							<cSource src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
+							<source src="https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav" type="audio/wav">
 							</audio>
 							<br>
 						<input type="range" min="50" max="200" value="100"  onchange="var a = document.getElementById('loopspeed'); console.log(a); a.playbackRate=this.value/100;">
@@ -508,7 +508,7 @@
 						</font>
 					</div>
 					<div class="fragment">
-						<font style="font-size: 42px;">Realtime</font>
+						<font style="font-size: 42px;">Realtime => Callback Based</font>
 					</div>
 				</section>
 				<section>
@@ -584,8 +584,8 @@
 						</span>
 					</div>
 					<div class="fragment" data-fragment-index="3">
-						<pre><code>cSource = context.createOscillator();
-cSource.connect(myContext.destination);</code></pre>
+						<pre><code>source = context.createOscillator();
+source.connect(myContext.destination);</code></pre>
 					</div>
 					<div class="fragment" data-fragment-index="5">
 							<font style="font-size: 24px;">
@@ -710,12 +710,12 @@ cSource.connect(myContext.destination);</code></pre>
 					<div>
 						<pre><code>var audio = new Audio();
 audio.src = 'https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.mp3';
-cSource = context.createMediaElementSource(audio);
+source = context.createMediaElementSource(audio);
 var filter = context.createBiquadFilter();
 filter.type = filter.LOWPASS;
 filter.frequency.value = 5000;
 
-cSource.connect(this.filter);
+source.connect(this.filter);
 filter.connect(context.destination);
 						</code></pre>
 					</div>
@@ -771,24 +771,24 @@ filter.connect(context.destination);
 				<section>
 					<h2>Convolver</h2>
 					<div>
-						<pre><code>var cSource = context.createBufferSource();
+						<pre><code>var source = context.createBufferSource();
 var convolver = context.createConvolver();
 
-cSource.connect(convolver);
+source.connect(convolver);
 convolver.connect(context.destination);
 
-/*Load cSource audio and impulse response*/
+/*Load source audio and impulse response*/
 var request = new XMLHttpRequest();
 request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/deep10.mp3", true);
 request.responseType = "arraybuffer";
 request.onload = function () {
-	cSource.buffer = context.createBuffer(request.response, 2);
+	source.buffer = context.createBuffer(request.response, 2);
 	var ir_request = new XMLHttpRequest();
 	ir_request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
 	ir_request.responseType = "arraybuffer";
 	ir_request.onload = function () {
 		convolver.buffer = context.createBuffer(ir_request.response, 2);
-		cSource.start(0);
+		source.start(0);
 	}
 	ir_request.send();
 }
@@ -823,7 +823,7 @@ request.send();</code></pre>
 					var hButton = document.getElementById("hButton");
 					var cButton = document.getElementById("cButton");
 
-					/*Load cSource audio and impulse response*/
+					/*Load source audio and impulse response*/
 					var request = new XMLHttpRequest();
 					request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/deep10.mp3", true);
 					request.responseType = "arraybuffer";
@@ -942,6 +942,41 @@ request.send();</code></pre>
 						<br>
 					</div>
 					<div>http://www.html5rocks.com/en/tutorials/webaudio/intro/<br>
+					</div>
+					<div>
+						<br>
+					</div>
+				</section>
+				<section>
+					<h2>More Resources</h2>
+					<div>
+						<br>
+					</div>
+					<div>http://animatedsoundworks.com:8001/<br>
+					</div>
+					<div>
+						<br>
+					</div>
+					<div>
+						<br>
+					</div>
+					<div>https://github.com/web-audio-components<br>
+					</div>
+					<div>
+						<br>
+					</div>
+					<div>
+						<br>
+					</div>
+					<div>https://github.com/cwilso/WebAudio<br>
+					</div>
+					<div>
+						<br>
+					</div>
+					<div>
+						<br>
+					</div>
+					<div>https://github.com/audiocogs<br>
 					</div>
 					<div>
 						<br>
