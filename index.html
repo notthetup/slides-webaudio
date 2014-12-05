@@ -779,20 +779,30 @@ convolver.connect(context.destination);
 
 /*Load source audio and impulse response*/
 var request = new XMLHttpRequest();
+var ir_request = new XMLHttpRequest();
 request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/deep10.mp3", true);
 request.responseType = "arraybuffer";
 request.onload = function () {
-	source.buffer = context.createBuffer(request.response, 2);
-	var ir_request = new XMLHttpRequest();
-	ir_request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
-	ir_request.responseType = "arraybuffer";
-	ir_request.onload = function () {
-		convolver.buffer = context.createBuffer(ir_request.response, 2);
-		source.start(0);
-	}
-	ir_request.send();
+	context.decodeAudioData(request.response, function (decodedBuffer){
+		source.buffer = decodedBuffer
+		if (convolver.buffer){
+			source.start(0);
+		}
+	});
 }
-request.send();</code></pre>
+ir_request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
+ir_request.responseType = "arraybuffer";
+ir_request.onload = function () {
+	context.decodeAudioData(request.response, function (decodedBuffer){
+	convolver.buffer = decodedBuffer
+		if (source.buffer){
+			source.start(0);
+		}
+	});
+}
+ir_request.send();
+request.send();
+</code></pre>
 					</div>
 					<div>
 						<br>
@@ -828,31 +838,48 @@ request.send();</code></pre>
 					request.open("GET", "https://dl.dropboxusercontent.com/u/77191118/deep10.mp3", true);
 					request.responseType = "arraybuffer";
 					request.onload = function () {
-						sourceBuffer = context.createBuffer(request.response, 2);
-						cSource.buffer = sourceBuffer;
-						hSource.buffer = sourceBuffer;
+						sourceBuffer = context.decodeAudioData(request.response, function (sourceBuffer){
+							cSource.buffer = sourceBuffer;
+							hSource.buffer = sourceBuffer;
+							if (hConvolver.buffer){
+								hButton.disabled = false;
+							}
 
-
-						var ir_requestH = new XMLHttpRequest();
-						ir_requestH.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
-						ir_requestH.responseType = "arraybuffer";
-						ir_requestH.onload = function () {
-							hConvolver.buffer = context.createBuffer(ir_requestH.response, 2);
-							hButton.disabled = false;
-
-						}
-						ir_requestH.send();
-
-						var ir_requestC = new XMLHttpRequest();
-						ir_requestC.open("GET", "https://dl.dropboxusercontent.com/u/77191118/cup_ir.wav", true);
-						ir_requestC.responseType = "arraybuffer";
-						ir_requestC.onload = function () {
-							cConvolver.buffer = context.createBuffer(ir_requestC.response, 2);
-							cButton.disabled = false;
-						}
-						ir_requestC.send();
+							if (cConvolver.buffer){
+								cButton.disabled = false;
+							}
+						});
 					}
+
+					var ir_requestH = new XMLHttpRequest();
+					ir_requestH.open("GET", "https://dl.dropboxusercontent.com/u/77191118/church_ir.wav", true);
+					ir_requestH.responseType = "arraybuffer";
+					ir_requestH.onload = function () {
+						context.decodeAudioData(ir_requestH.response, function (buffer){
+							hConvolver.buffer = buffer;
+							if (hSource.buffer){
+								hButton.disabled = false;
+							}
+						});
+
+					}
+
+					var ir_requestC = new XMLHttpRequest();
+					ir_requestC.open("GET", "https://dl.dropboxusercontent.com/u/77191118/cup_ir.wav", true);
+					ir_requestC.responseType = "arraybuffer";
+					ir_requestC.onload = function () {
+						context.decodeAudioData(ir_requestC.response, function(buffer){
+							cConvolver.buffer = buffer;
+							if (cSource.buffer){
+								cButton.disabled = false;
+							}
+
+						});
+					}
+
 					request.send();
+					ir_requestH.send();
+					ir_requestC.send();
 
 					hButton.addEventListener('click', function (){
 						if(hState == "stopped"){
